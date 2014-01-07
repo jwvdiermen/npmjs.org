@@ -27,7 +27,8 @@ shows.package = function (doc, req) {
       p._id = p.name + '@' + p.version
       doc.versions[clean] = p
     }
-    if (doc.versions[v].dist.tarball) {
+    // rewrite tarball url, but only if we're not on localhost
+    if (doc.versions[v].dist.tarball && (req.headers.Host.indexOf('localhost') !== 0 && req.headers.Host.indexOf('127.0.0.1') !== 0)) {
       // if there is an attachment for this tarball, then use that.
       // make it point at THIS registry that is being requested,
       // with the full /db/_design/app/_rewrite if that is being used,
