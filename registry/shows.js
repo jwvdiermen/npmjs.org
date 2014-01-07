@@ -74,7 +74,15 @@ shows.package = function (doc, req) {
           tf = requestedPath.slice(0, i + 1).concat(tf)
         }
         t = '/' + tf.join('/')
-        var h = "http://" + req.headers.Host
+
+        // Prevent localhost host for tarball which can't be reached by external clients.
+        var host = req.headers.Host;
+        if (host.indexOf('localhost') === 0 || host.indexOf('127.0.0.1') === 0) {
+          // Use the original host.
+          host = doc.versions[v].dist.tarball.match(/https?:\/\/([^\/:]+(:[0-9]+)?)/)[1];
+        }
+
+        var h = "http://" + host
 
         doc.versions[v].dist.tarball = h + t
       } else {
